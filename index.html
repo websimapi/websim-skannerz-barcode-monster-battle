@@ -1,0 +1,62 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Skannerz - Barcode Monster Battle</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Include QuaggaJS library from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+</head>
+<body>
+  <!-- Start Screen: Choose your tribe -->
+  <div id="start-screen" class="screen">
+    <h1>Skannerz</h1>
+    <p>Welcome to Skannerz – a barcode-driven monster adventure!<br>
+       Choose your tribe to begin your journey.</p>
+    <div class="tribe-buttons">
+      <button class="tribe-btn" data-tribe="Zendra">Zendra (Blue)</button>
+      <button class="tribe-btn" data-tribe="Pataak">Pataak (Green)</button>
+      <button class="tribe-btn" data-tribe="Ujalu">Ujalu (Red)</button>
+    </div>
+  </div>
+
+  <!-- Scanner Screen: Use your phone camera to scan UPC codes -->
+  <div id="scanner-screen" class="screen hidden">
+    <h2>Scan a Barcode</h2>
+    <div id="scanner-container"></div>
+    <br>
+    <button id="stop-scan-btn">Stop Scanning</button>
+  </div>
+
+  <!-- Result Screen: Displays collected monster or rival details -->
+  <div id="result-screen" class="screen hidden">
+    <div id="result-content"></div>
+    <br>
+    <button id="result-continue-btn">Continue</button>
+  </div>
+
+  <!-- Battle Screen: Engage in a turn-based battle -->
+  <div id="battle-screen" class="screen hidden">
+    <h2>Battle!</h2>
+    <div id="battle-container">
+      <div class="battle-monster" id="player-monster">
+        <!-- Player monster info -->
+      </div>
+      <div class="battle-monster" id="enemy-monster">
+        <!-- Enemy monster info -->
+      </div>
+    </div>
+    <div id="battle-info">
+      <p>Player HP: <span id="player-hp">100</span></p>
+      <p>Enemy HP: <span id="enemy-hp">100</span></p>
+    </div>
+    <div id="attack-options">
+      <!-- Attack buttons are added here dynamically -->
+    </div>
+    <br>
+    <button id="battle-back-btn" class="hidden">Back to Scanner</button>
+  </div>
+
+  <script type="module" src="app.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
