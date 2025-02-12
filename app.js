@@ -4,6 +4,7 @@ let playerCollection = [];
 let currentEnemyMonster = null;
 let currentPlayerMonster = null;
 let scanningActive = false;
+let ambientSensor = null; // New variable for Ambient Light Sensor
 
 // Helper: Show only the designated screen
 function showScreen(screenId) {
@@ -30,6 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('stop-scan-btn').addEventListener('click', () => {
     scanningActive = false;
     Quagga.stop();
+    if (ambientSensor) {
+      ambientSensor.stop();
+      ambientSensor = null;
+    }
+    toggleTorch(false); // Ensure torch is turned off
     showScreen('start-screen');
   });
   
@@ -66,6 +72,31 @@ document.addEventListener('DOMContentLoaded', () => {
 // Start the barcode scanner using QuaggaJS
 function startScanner() {
   scanningActive = true;
+
+  // Setup Ambient Light Sensor to auto-enable torch in dark environments
+  if ('AmbientLightSensor' in window) {
+    try {
+      ambientSensor = new AmbientLightSensor();
+      ambientSensor.addEventListener('reading', () => {
+        console.log('Ambient light level:', ambientSensor.illuminance);
+        // Threshold for darkness (e.g., less than 10 lux)
+        if (ambientSensor.illuminance < 10) {
+          toggleTorch(true);
+        } else {
+          toggleTorch(false);
+        }
+      });
+      ambientSensor.addEventListener('error', (event) => {
+        console.error('AmbientLightSensor error:', event.error.name, event.error.message);
+      });
+      ambientSensor.start();
+    } catch (error) {
+      console.error('Failed to start AmbientLightSensor:', error);
+    }
+  } else {
+    console.warn('Ambient Light Sensor API not supported on this device.');
+  }
+
   // Initialize Quagga with live video stream from the environment (back) camera
   Quagga.init({
     inputStream: {
@@ -93,9 +124,34 @@ function startScanner() {
     if (scanningActive) {
       scanningActive = false;
       Quagga.stop();
+      if (ambientSensor) {
+        ambientSensor.stop();
+        ambientSensor = null;
+      }
+      toggleTorch(false); // Turn off torch when scanning stops
       processBarcode(result.codeResult.code);
     }
   });
+}
+
+// Toggle the camera's torch (flashlight) if supported
+function toggleTorch(enable) {
+  const video = document.querySelector('#scanner-container video');
+  if (video && video.srcObject) {
+    const track = video.srcObject.getVideoTracks()[0];
+    if (track) {
+      const capabilities = track.getCapabilities();
+      if (capabilities.torch) {
+        track.applyConstraints({
+          advanced: [{ torch: enable }]
+        }).then(() => {
+          console.log(`Torch ${enable ? 'enabled' : 'disabled'}.`);
+        }).catch(err => {
+          console.error('Failed to set torch mode:', err);
+        });
+      }
+    }
+  }
 }
 
 // Process the scanned barcode and generate a monster
